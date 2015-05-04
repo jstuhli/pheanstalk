@@ -243,6 +243,23 @@ class Pheanstalk implements PheanstalkInterface
     /**
      * {@inheritDoc}
      */
+    public function putUnique(
+        $data,
+        $priority = PheanstalkInterface::DEFAULT_PRIORITY,
+        $delay = PheanstalkInterface::DEFAULT_DELAY,
+        $ttr = PheanstalkInterface::DEFAULT_TTR
+    )
+    {
+        $response = $this->_dispatch(
+            new Command\PutUniqueCommand($data, $priority, $delay, $ttr)
+        );
+
+        return $response['id'];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function putInTube(
         $tube,
         $data,
@@ -254,6 +271,22 @@ class Pheanstalk implements PheanstalkInterface
         $this->useTube($tube);
 
         return $this->put($data, $priority, $delay, $ttr);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function putUniqueInTube(
+        $tube,
+        $data,
+        $priority = PheanstalkInterface::DEFAULT_PRIORITY,
+        $delay = PheanstalkInterface::DEFAULT_DELAY,
+        $ttr = PheanstalkInterface::DEFAULT_TTR
+    )
+    {
+        $this->useTube($tube);
+
+        return $this->putUnique($data, $priority, $delay, $ttr);
     }
 
     /**

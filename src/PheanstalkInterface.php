@@ -166,6 +166,18 @@ interface PheanstalkInterface
     public function put($data, $priority = self::DEFAULT_PRIORITY, $delay = self::DEFAULT_DELAY, $ttr = self::DEFAULT_TTR);
 
     /**
+     * Puts a job (if the job does not yet exist) on the queue. Server must be patched with
+     * https://github.com/netsweng/beanstalkd/commit/89e186c24444b43182e2dab0869c83e21baba0ad
+     *
+     * @param  string $data     The job data
+     * @param  int    $priority From 0 (most urgent) to 0xFFFFFFFF (least urgent)
+     * @param  int    $delay    Seconds to wait before job becomes ready
+     * @param  int    $ttr      Time To Run: seconds a job can be reserved for
+     * @return int    The new job ID
+     */
+    public function putUnique($data, $priority = self::DEFAULT_PRIORITY, $delay = self::DEFAULT_DELAY, $ttr = self::DEFAULT_TTR);
+
+    /**
      * Puts a job on the queue using specified tube.
      *
      * Using this method is equivalent to calling useTube() then put(), with
@@ -180,6 +192,23 @@ interface PheanstalkInterface
      * @return int    The new job ID
      */
     public function putInTube($tube, $data, $priority = self::DEFAULT_PRIORITY, $delay = self::DEFAULT_DELAY, $ttr = self::DEFAULT_TTR);
+
+    /**
+     * Puts a job (if the job does not yet exist) on the queue using specified tube. Server must be patched with
+     * https://github.com/netsweng/beanstalkd/commit/89e186c24444b43182e2dab0869c83e21baba0ad
+     *
+     * Using this method is equivalent to calling useTube() then put(), with
+     * the added benefit that it will not execute the USE command if the client
+     * is already using the specified tube.
+     *
+     * @param  string $tube     The tube to use
+     * @param  string $data     The job data
+     * @param  int    $priority From 0 (most urgent) to 0xFFFFFFFF (least urgent)
+     * @param  int    $delay    Seconds to wait before job becomes ready
+     * @param  int    $ttr      Time To Run: seconds a job can be reserved for
+     * @return int    The new job ID
+     */
+    public function putUniqueInTube($tube, $data, $priority = self::DEFAULT_PRIORITY, $delay = self::DEFAULT_DELAY, $ttr = self::DEFAULT_TTR);
 
     /**
      * Puts a reserved job back into the ready queue.
